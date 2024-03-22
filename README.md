@@ -15,6 +15,8 @@ A list of mods/addittions/changes for the game Balatro.
 
 Thanks to [@Steamo](https://github.com/Steamopollys) for the [mod loader and injector](https://github.com/Steamopollys/Steamodded/) and example mods!
 
+Also, thanks to [@Oier](https://github.com/notoier) for providing insights on different things and helping overall.
+
 
   ## Installation
 - This mod requires [ModLoader](https://github.com/Steamopollys/Steamodded/).
