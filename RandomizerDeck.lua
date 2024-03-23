@@ -94,19 +94,22 @@ function Game:start_run(args)
 		for k, v in pairs(G.P_TAGS) do
 			if v.config and next(v.config) ~= nil then
 
-				v.config = randomizeTable(v.config)
+				v.config = randomize_config(v.config)
 
 			end
 		end
 
-		--Centers
+		--Centers except bpacks and Backs
 		for k, v in pairs(G.P_CENTERS) do
-			if v.set ~= "Back" and (v.config and next(v.config)) ~= nil then
+			if v.cost then v.cost = math.random(1, v.cost*2) end
 
-				if v.cost then v.cost = math.random(1, v.cost*2) end
+			if v.set ~= "Back" and v.set ~= "Booster" and (v.config and next(v.config)) ~= nil then
+				v.config = randomize_config(v.config)
+			end
 
-				v.config = randomizeTable(v.config)
-
+			--BoosterPacks
+			if v.set == "Booster" then
+				v.config = randomize_b_pack_config(v.config)
 			end
 		end
 		
@@ -117,16 +120,27 @@ function Game:start_run(args)
 
 end
 
-function randomizeTable(table)
+function randomize_config(table)
 	for k, v in pairs(table) do
-		if type(v) == "number" then
+		if type(v) == "number" and v >= 1 then
 			table[k] = math.random(1, v*2)
+
+		--Small adjustments for values lower than 1
+		elseif type(v) == "number" and v < 1 and v > 0 then
+			table[k] = math.floor((0.01 + math.random() * ((v*4) - 0.01)) * 100) / 100
+
 		elseif type(v) == "table" and next(v) ~= nil then
-			randomizeTable(v)
+			randomize_config(v)
 		end
 	end
-
 	return table
+end
+
+function randomize_b_pack_config(b_pack)
+	b_pack.extra = math.random(1 , 5) 
+	b_pack.choose = math.random( 1, 2)
+
+	return b_pack
 end
 
 local loc_def = {
