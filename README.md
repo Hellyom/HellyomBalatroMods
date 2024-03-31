@@ -1,7 +1,21 @@
 # HellyomBalatroMods
 A list of mods/addittions/changes for the game Balatro.
 
-## [Randomizer Deck](/RandomizerDeck.lua)
+## [Roulette (Coming briefly) (WIP)]
+![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/64f133b4-3fdd-49d7-b3c9-476ea77454a6)
+![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/06b387f2-6ebc-4fc2-ad74-991990e6e155)
+
+### What does this mod do?
+-Adds a roulette to the game so you can loose all your money and loose your run faster, obviously.
+
+## Planned additions/changes
+-Sounds
+-Better UI appearance 
+-Any suggestion that catches my attention in the Discord channel
+
+---
+
+## [Randomizer Deck (Abandoned for now)](/RandomizerDeck.lua)
 ![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/7669f4eb-3a7c-4b79-b125-d7c2ee084c46)
 ### What does the deck do?
 - Start with one basic random voucher
