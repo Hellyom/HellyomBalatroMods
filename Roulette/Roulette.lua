@@ -15,7 +15,7 @@ G.BET_SIZE = 0
 G.BET_COLOUR = "RED"
 G.START_ROUL_SPIN = false
 G.ROUL_SPIN = false
-G.ROUL_VEL = randomFloat(1, 20) 
+G.ROUL_VEL = randomFloat(6, 14) 
 G.WHEEL = {"GREEN", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED"}
 G.PAYOUTS = {GREEN = 11, BLACK = 2, RED = 1.8}
 
@@ -141,7 +141,7 @@ function Game:update_shop(dt)
     G.ROUL_SPIN = true
     G.START_ROUL_SPIN = false
 
-    G.ROUL_VEL = randomFloat(6, 16) 
+    G.ROUL_VEL = randomFloat(6, 14) 
 
 
     --Retire money
