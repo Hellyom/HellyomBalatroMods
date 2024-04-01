@@ -8,6 +8,12 @@ A list of mods/addittions/changes for the game Balatro.
 ### What does this mod do?
 - Adds a roulette to the game so you can loose all your money and loose your run faster, obviously.
 
+## Installation:
+- Place .lua file inside mods folder 
+- Copy contents of x1 and x2 folders into the same folders inside the assets folder in "Mods"
+
+## **IMPORTANT: DISABLE PIXEL ART SMOOTHING IN THE SETTINGS** still working on a fix for this
+
 ## Planned additions/changes
 - Sounds
 - Better UI appearance 
