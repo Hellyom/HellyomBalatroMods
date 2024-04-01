@@ -1,6 +1,8 @@
 # HellyomBalatroMods
 A list of mods/addittions/changes for the game Balatro.
 
+**STEAMMODDED REQUIRED FOR ALL MODS**
+
 ## [Roulette (WorkInProgress)](/Roulette)
 ![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/64f133b4-3fdd-49d7-b3c9-476ea77454a6)
 ![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/06b387f2-6ebc-4fc2-ad74-991990e6e155)
