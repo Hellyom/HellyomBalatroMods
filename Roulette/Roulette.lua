@@ -15,7 +15,7 @@ G.BET_SIZE = 0
 G.BET_COLOUR = "RED"
 G.START_ROUL_SPIN = false
 G.ROUL_SPIN = false
-G.ROUL_VEL = randomFloat(0.02, 0.08)
+G.ROUL_VEL = randomFloat(1, 20) 
 G.WHEEL = {"GREEN", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED"}
 G.PAYOUTS = {GREEN = 11, BLACK = 2, RED = 1.8}
 
@@ -141,7 +141,7 @@ function Game:update_shop(dt)
     G.ROUL_SPIN = true
     G.START_ROUL_SPIN = false
 
-    G.ROUL_VEL = randomFloat(0.02, 0.08)
+    G.ROUL_VEL = randomFloat(6, 16) 
 
 
     --Retire money
@@ -156,8 +156,8 @@ function Game:update_shop(dt)
     if G.OVERLAY_MENU then
 
       --Rotate and decelerate
-      spin_btn:rotate(G.ROUL_VEL)
-      G.ROUL_VEL = G.ROUL_VEL - 0.00002
+      spin_btn:rotate(G.ROUL_VEL * dt)
+      G.ROUL_VEL = G.ROUL_VEL - (1 * dt)
 
       --Play sound if very near limit
       --if (current_rads % (6.283185 / #G.WHEEL)) < 0.02 then
@@ -166,7 +166,7 @@ function Game:update_shop(dt)
     end
 
     --Roulette stops
-    if G.ROUL_VEL <= 0.000001 then
+    if G.ROUL_VEL <= 0.01 then
       
       local colour_landed = roulette_landing(spin_btn.config.object.T.r, G.WHEEL)
       
@@ -387,7 +387,6 @@ function Moveable:rotate(rad)
   self.config.object.VT.r = self.VT.r + rad 
   self.T.r = self.T.r + rad 
   self.config.object.T.r = self.T.r + rad 
-
 end
 
 --sections = {"GREEN","RED","BLACK","RED","BLACK","RED","BLACK","RED","BLACK"... etc}
