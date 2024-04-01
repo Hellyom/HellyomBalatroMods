@@ -178,10 +178,9 @@ function Game:update_shop(dt)
         --If bet size left from last bet is bigger than wallet, set to current all-in.
         if G.BET_SIZE > G.GAME.dollars then G.BET_SIZE = G.GAME.dollars end
         G.FUNCS.update_bet_size_bump_rate()
-        
-        G.ROUL_SPIN = false
       end
-
+      
+      G.ROUL_SPIN = false
     end
   end
 
