@@ -12,7 +12,7 @@ A list of mods/addittions/changes made by me for the game Balatro.
 
 ## Installation:
 - Place .lua file inside mods folder 
-- Copy contents of x1 and x2 folders into the same folders inside the assets folder in "Mods"
+- Copy "x1" and "x2" folders into the "assets" folder in the mods directory.
 
 ## **IMPORTANT: DISABLE PIXEL ART SMOOTHING IN THE SETTINGS** still working on a fix for this
 
