@@ -1,8 +1,6 @@
 # HellyomBalatroMods
 A list of mods/addittions/changes made by me for the game Balatro.
 
-## **STEAMMODDED REQUIRED FOR ALL MODS**
-
 ## [Roulette (WorkInProgress)](/Roulette)
 ![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/64f133b4-3fdd-49d7-b3c9-476ea77454a6)
 ![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/06b387f2-6ebc-4fc2-ad74-991990e6e155)
@@ -10,9 +8,11 @@ A list of mods/addittions/changes made by me for the game Balatro.
 ### What does this mod do?
 - Adds a roulette to the game so you can loose all your money and loose your run faster, obviously.
 
+﻿## STEAMMODDED REQUIRED (LAST VERSION TESTED 0.9.3)
+
 ## Installation:
-- Place .lua file inside mods folder 
-- Copy "x1" and "x2" folders into the "assets" folder in the mods directory.
+- Place .lua file inside the mods folder
+- Copy "x1" and "x2" folders into the "assets" folder in the mods directory. Should look like this ("Mods/assets/x1", "Mods/assets/x2")
 
 ## **IMPORTANT: DISABLE PIXEL ART SMOOTHING IN THE SETTINGS** still working on a fix for this
 
@@ -39,6 +39,7 @@ Thanks to [@Steamo](https://github.com/Steamopollys) for the [mod loader and inj
 
 Also, thanks to [@Oier](https://github.com/notoier) for providing insights on different things and helping overall.
 
+## STEAMMODDED REQUIRED (LAST VERSION TESTED 0.7.2)
 
   ## Installation
 - This mod requires [ModLoader](https://github.com/Steamopollys/Steamodded/).
