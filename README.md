@@ -8,7 +8,7 @@ A list of mods/addittions/changes made by me for the game Balatro.
 ### What does this mod do?
 - Adds a roulette to the game so you can loose all your money and loose your run faster, obviously.
 
-﻿## STEAMMODDED REQUIRED (LAST VERSION TESTED 0.9.3)
+## STEAMMODDED REQUIRED (LAST VERSION TESTED 0.9.3)
 
 ## Installation:
 - Place .lua file inside the mods folder
