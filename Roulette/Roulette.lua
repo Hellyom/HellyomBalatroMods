@@ -11,6 +11,7 @@ function randomFloat(lower, greater)
   return lower + math.random()  * (greater - lower);
 end
 
+
 G.BET_SIZE = 0
 G.BET_COLOUR = "RED"
 G.START_ROUL_SPIN = false
@@ -18,6 +19,11 @@ G.ROUL_SPIN = false
 G.ROUL_VEL = randomFloat(6, 14) 
 G.WHEEL = {"GREEN", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED", "BLACK", "RED"}
 G.PAYOUTS = {GREEN = 11, BLACK = 2, RED = 1.8}
+--rads per section of the wheel
+G.RADS_PER_SC = 6.283185 / #G.WHEEL
+
+--Previous radian used for roulette sound
+PREV_RADS = 0
 
 
 function SMODS.INIT.Roulette()
@@ -26,6 +32,8 @@ function SMODS.INIT.Roulette()
   SMODS.Sprite:new("roulette", SMODS.findModByID("Roulette").path, "roulette.png", 199, 199, "asset_atli"):register()
   SMODS.Sprite:new("roul_marker", SMODS.findModByID("Roulette").path, "roul_marker.png", 19, 7, "asset_atli"):register()
 end
+
+--OVERWRITTEN FUNCTIONS
 
 G.UIDEF.shopRef = G.UIDEF.shop
 function G.UIDEF.shop()
@@ -135,7 +143,7 @@ end
 Game.updateShopRef = Game.update_shop
 function Game:update_shop(dt)
   self:updateShopRef(dt)
-  
+
   --When spin is pressed
   if G.START_ROUL_SPIN then
     G.ROUL_SPIN = true
@@ -150,41 +158,172 @@ function Game:update_shop(dt)
 
   --Roulette is spinning
   if G.ROUL_SPIN then
-    local spin_btn = G.OVERLAY_MENU:get_UIE_by_ID("roulette_object")
-    local current_rads = spin_btn.config.object.T.r 
+    local roulette = G.OVERLAY_MENU:get_UIE_by_ID("roulette_object")
+    local current_rads = roulette.config.object.T.r 
     
-    if G.OVERLAY_MENU then
+    --Rotate and decelerate
+    roulette:rotate(G.ROUL_VEL * dt)
+    G.ROUL_VEL = G.ROUL_VEL - (1 * dt)
 
-      --Rotate and decelerate
-      spin_btn:rotate(G.ROUL_VEL * dt)
-      G.ROUL_VEL = G.ROUL_VEL - (1 * dt)
-
-      --Play sound if very near limit
-      --if (current_rads % (6.283185 / #G.WHEEL)) < 0.02 then
-      --  play_sound('generic1', 0.9 + math.random()*0.1, 0.8)
-      --end
+    --Play sound when passes from one section of the wheel to another
+    if (math.floor(((PREV_RADS % 6.283185) % G.RADS_PER_SC) * 10) > 0) and (math.floor(((current_rads % 6.283185) % G.RADS_PER_SC) * 10) == 0) then
+      play_sound('button', 0.9 + math.random()*0.1, 0.8)
     end
 
-    --Roulette stops
-    if G.ROUL_VEL <= 0.01 then
+    PREV_RADS = current_rads
+  end  
+
+  --Roulette stops
+  if G.ROUL_VEL <= 0.01 and G.ROUL_SPIN then
+    local roulette = G.OVERLAY_MENU:get_UIE_by_ID("roulette_object")
+    
+    local colour_landed = roulette_landing(roulette.config.object.T.r, G.WHEEL)
+    
+    --If colourLanded is the same as the colour the bet was placed on, its a win
+    if colour_landed == G.BET_COLOUR then
+      ease_dollars(roulette_payout(G.PAYOUTS, colour_landed, G.BET_SIZE))
+    else
       
-      local colour_landed = roulette_landing(spin_btn.config.object.T.r, G.WHEEL)
-      
-      --If colourLanded is the same as the colour the bet was placed on, its a win
-      if colour_landed == G.BET_COLOUR then
-        ease_dollars(roulette_payout(G.PAYOUTS, colour_landed, G.BET_SIZE))
-      else
-        
-        --If bet size left from last bet is bigger than wallet, set to current all-in.
-        if G.BET_SIZE > G.GAME.dollars then G.BET_SIZE = G.GAME.dollars end
-        G.FUNCS.update_bet_size_bump_rate()
-      end
-      
-      G.ROUL_SPIN = false
+      --If bet size left from last bet is bigger than wallet, set to current all-in.
+      --Should i make a function that manages better BET_SIZE better? Yes. Will I do it? Idk
+      if G.BET_SIZE > G.GAME.dollars and G.GAME.dollars >= 0 then G.BET_SIZE = G.GAME.dollars end
+      G.FUNCS.update_bet_size_bump_rate()
     end
+    
+    --STOPS THE ROULETTE
+    G.ROUL_SPIN = false
   end
+  
 
 end
+
+function Controller:key_press_update(key, dt)
+  if self.locks.frame then return end
+  if string.sub(key, 1, 2) == 'kp' then key = string.sub(key, 3) end
+  if key == 'enter' then key = 'return' end
+
+  if self.text_input_hook then
+      if key == "escape" then
+          self.text_input_hook = nil
+      elseif key == "capslock" then
+          self.capslock = not self.capslock
+      else
+          G.FUNCS.text_input_key{
+              e=self.text_input_hook,
+              key = key,
+              caps = self.held_keys["lshift"] or self.held_keys["rshift"]
+          }
+      end
+      return
+  end
+
+  if key == "escape" then
+      if G.STATE == G.STATES.SPLASH then 
+          G:delete_run()
+          G:main_menu()
+      else
+          if not G.OVERLAY_MENU then 
+              G.FUNCS:options()
+          elseif not G.OVERLAY_MENU.config.no_esc then
+              G.ROUL_SPIN = false
+              G.FUNCS:exit_overlay_menu()
+          end
+      end
+  end
+
+  if ((self.locked) and not G.SETTINGS.paused) or (self.locks.frame) or (self.frame_buttonpress) then return end
+  self.frame_buttonpress = true    
+  self.held_key_times[key] = 0
+
+
+  if not _RELEASE_MODE then
+      if key == 'tab' and not G.debug_tools then
+          G.debug_tools = UIBox{
+              definition = create_UIBox_debug_tools(),
+              config = {align='cr', offset = {x=G.ROOM.T.x + 11,y=0},major = G.ROOM_ATTACH, bond = 'Weak'}
+          }
+          G.E_MANAGER:add_event(Event({
+              blockable = false,
+              func = function()
+                  G.debug_tools.alignment.offset.x = -4
+                  return true
+              end
+          }))
+      end
+      if self.hovering.target and self.hovering.target:is(Card) then 
+          local _card = self.hovering.target
+          if  G.OVERLAY_MENU then 
+              if key == "1"  then
+                  unlock_card(_card.config.center)
+                  _card:set_sprites(_card.config.center)
+              end
+              if key == "2" then
+                  unlock_card(_card.config.center)
+                  discover_card(_card.config.center)
+                  _card:set_sprites(_card.config.center)
+              end
+              if key == "3" then
+                  if _card.ability.set == 'Joker' and G.jokers and #G.jokers.cards < G.jokers.config.card_limit then
+                      add_joker(_card.config.center.key)
+                      _card:set_sprites(_card.config.center)
+                  end
+                  if _card.ability.consumeable and G.consumeables and #G.consumeables.cards < G.consumeables.config.card_limit then
+                      add_joker(_card.config.center.key)
+                      _card:set_sprites(_card.config.center)
+                  end
+              end
+          end
+          if key == 'q' then
+              if (_card.ability.set == 'Joker' or _card.playing_card or _card.area) then
+                  local _edition = {
+                      foil = not _card.edition,
+                      holo = _card.edition and _card.edition.foil,
+                      polychrome = _card.edition and _card.edition.holo,
+                      negative = _card.edition and _card.edition.polychrome,
+                  }
+                  _card:set_edition(_edition, true, true)
+              end
+          end
+      end
+      if key == 'h' then
+          G.debug_UI_toggle = not G.debug_UI_toggle
+      end
+      if key == 'b' then
+          G:delete_run()
+          G:start_run({})
+      end
+      if key == 'l' then
+          G:delete_run()
+          G.SAVED_GAME = get_compressed(G.SETTINGS.profile..'/'..'save.jkr')
+          if G.SAVED_GAME ~= nil then G.SAVED_GAME = STR_UNPACK(G.SAVED_GAME) end
+          G:start_run({savetext = G.SAVED_GAME})
+      end
+      if key == 'j' then
+          G.debug_splash_size_toggle = not G.debug_splash_size_toggle
+          G:delete_run()
+          G:main_menu('splash')
+      end
+      if key == '8' then
+          love.mouse.setVisible( not love.mouse.isVisible() )
+      end
+      if key == '9' then
+          G.debug_tooltip_toggle = not G.debug_tooltip_toggle
+      end
+    if key == "space" then
+        live_test()
+    end
+    if key == 'v' then
+      if not G.prof then G.prof = require "engine/profile"; G.prof.start()
+      else    G.prof:stop();
+          print(G.prof.report()); G.prof = nil end
+      end
+     if key == "p" then
+         G.SETTINGS.perf_mode = not G.SETTINGS.perf_mode
+     end
+  end
+end
+
+---------------------------
 
 function G.FUNCS.roulette_button()
   G.FUNCS.overlay_menu({
@@ -195,9 +334,9 @@ end
 
 function G.FUNCS.ease_bet_size_plus_1()
   local num = 1
-  if (G.BET_SIZE + num) >= G.GAME.dollars then
+  if (G.BET_SIZE + num) >= G.GAME.dollars and G.GAME.dollars > 0 then
     G.BET_SIZE = G.GAME.dollars
-  else
+  elseif G.GAME.dollars > 0 then
     G.BET_SIZE = G.BET_SIZE + num 
   end
   G.FUNCS.update_bet_size_bump_rate()
@@ -206,9 +345,9 @@ end
 
 function G.FUNCS.ease_bet_size_plus_10()
   local num = 10
-  if (G.BET_SIZE + num) >= G.GAME.dollars then
+  if (G.BET_SIZE + num) >= G.GAME.dollars and G.GAME.dollars > 0 then
     G.BET_SIZE = G.GAME.dollars
-  else
+  elseif G.GAME.dollars > 0 then
     G.BET_SIZE = G.BET_SIZE + num 
   end
   G.FUNCS.update_bet_size_bump_rate()
@@ -217,9 +356,9 @@ end
 
 function G.FUNCS.ease_bet_size_plus_100()
   local num = 100
-  if (G.BET_SIZE + num) >= G.GAME.dollars then
+  if (G.BET_SIZE + num) >= G.GAME.dollars and G.GAME.dollars > 0 then
     G.BET_SIZE = G.GAME.dollars
-  else
+  elseif G.GAME.dollars > 0 then
     G.BET_SIZE = G.BET_SIZE + num 
   end
   G.FUNCS.update_bet_size_bump_rate()
@@ -371,7 +510,7 @@ function create_roulette_menu()
     }},
     {n=G.UIT.R, config={align = "cm", minw = 20, minh = 1, colour = G.C.CLEAR}, nodes = { --Button row
       {n=G.UIT.R, config={align = "cm", padding = 0.15}, nodes = {
-        {n=G.UIT.R, config={align = "cm", minw = 2, minh = 1, colour = G.C.GOLD, hover = true, shadow = true, emboss = 0.08, r = 0.3, button="exit_overlay_menu"}, nodes = {
+        {n=G.UIT.R, config={align = "cm", minw = 2, minh = 1, colour = G.C.GOLD, hover = true, shadow = true, emboss = 0.08, r = 0.3, button="exit_roulette_menu"}, nodes = {
           {n=G.UIT.T, config={text =  "Back", minw = 2, scale = 0.7, minh = 0.9, shadow = true, colour = G.C.UI.TEXT_LIGHT}}
         }}
       }}
@@ -401,6 +540,24 @@ end
 
 function roulette_payout(payouts, landed_on, dollars_bet)
     return dollars_bet * payouts[landed_on]
+end
+
+
+--Almost identical function as "exit_menu_overlay", just adapted to exit correctly roulette menu
+G.FUNCS.exit_roulette_menu = function()
+  if not G.OVERLAY_MENU then return end
+  G.CONTROLLER.locks.frame_set = true
+  G.CONTROLLER.locks.frame = true
+  G.CONTROLLER:mod_cursor_context_layer(-1000)
+  G.OVERLAY_MENU:remove()
+  G.OVERLAY_MENU = nil
+  G.VIEWING_DECK = nil
+  G.SETTINGS.paused = false
+
+  G.ROUL_SPIN = false
+
+  --Save settings to file
+  G:save_settings()
 end
 
 
