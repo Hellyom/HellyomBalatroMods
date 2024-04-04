@@ -6,7 +6,7 @@ A list of mods/addittions/changes made by me for the game Balatro.
 ![imagen](https://github.com/Hellyom/HellyomBalatroMods/assets/91801261/06b387f2-6ebc-4fc2-ad74-991990e6e155)
 
 ### What does this mod do?
-- Adds a roulette to the game so you can loose all your money and loose your run faster, obviously.
+- Adds a roulette to the game so you can lose all your money and loose your run faster, obviously.
 
 ## STEAMMODDED REQUIRED (LAST VERSION TESTED 0.9.3)
 
